@@ -57,9 +57,9 @@ async function getLiveSources(){
   const connectors = [
     { id:'eia_pjm_load', label:'EIA-930 PJM Load', category:'load', url:eiaRegionUrl('PJM'), parser:'eia', requiresEnv:'EIA_API_KEY' },
     { id:'eia_ercot_load', label:'EIA-930 ERCOT Load', category:'load', url:eiaRegionUrl('ERCO'), parser:'eia', requiresEnv:'EIA_API_KEY' },
-    { id:'pjm_dataminer', label:'PJM Data Miner', category:'lmp', url:'https://dataminer2.pjm.com/list', parser:'head' },
-    { id:'lbnl_queues', label:'LBNL Queued Up', category:'queue', url:'https://r.jina.ai/http://https://emp.lbl.gov/queues', parser:'head' },
-    { id:'epa_egrid', label:'EPA eGRID', category:'emissions', url:'https://r.jina.ai/http://https://www.epa.gov/egrid/download-data', parser:'head' }
+    { id:'pjm_dataminer', label:'PJM Data Miner', category:'lmp', url:'https://dataminer2.pjm.com', parser:'head' },
+    { id:'lbnl_queues', label:'LBNL Queued Up', category:'queue', url:'https://emp.lbl.gov/queues', parser:'head' },
+    { id:'epa_egrid', label:'EPA eGRID', category:'emissions', url:'https://www.epa.gov/egrid/download-data', parser:'head' }
   ];
   const results = await Promise.all(connectors.map(async c => {
     const result = c.requiresEnv && !process.env[c.requiresEnv] ? { ok:false, status:0, ms:0, bytes:0, json:null, error:`missing ${c.requiresEnv}`, credentialNeeded:true } : (c.parser === 'eia' ? await fetchJson(c.url) : await fetchHead(c.url));
