@@ -1,0 +1,353 @@
+{
+  "meta": {
+    "title": "美国电力与数据中心电网风险 Dashboard",
+    "asOf": "2026-07-06",
+    "version": "0.1.0",
+    "source": "Derived from Hermes LMVK research + Orennia article archive"
+  },
+  "thesis": "数据中心选址正在从‘光纤/客户优先’转向‘电力先行’。可交易的核心不是规划MW本身，而是负荷能否穿过并网队列、输电拥堵和网改成本三道门。",
+  "layers": [
+    {
+      "id": "ba_load",
+      "name": "宏观发电与平衡区",
+      "zh": "BA负荷 / 供需平衡",
+      "riskSignal": "峰值负荷、备用裕度、跨区依赖",
+      "sources": [
+        "EIA-930",
+        "FERC-714"
+      ],
+      "cadence": "hourly/annual",
+      "spatial": "Balancing Authority",
+      "priority": "A"
+    },
+    {
+      "id": "generator",
+      "name": "电站与机组台账",
+      "zh": "发电资产底盘",
+      "riskSignal": "周边可用电源、退役风险、燃料结构",
+      "sources": [
+        "EIA-860",
+        "EIA-923",
+        "EPA eGRID"
+      ],
+      "cadence": "monthly/annual",
+      "spatial": "Plant / Generator",
+      "priority": "A"
+    },
+    {
+      "id": "node",
+      "name": "输电网与节点价格",
+      "zh": "拥堵红绿图",
+      "riskSignal": "LMP拥堵分量、线路/变电站距离、电压等级",
+      "sources": [
+        "PJM Data Miner",
+        "ERCOT MIS",
+        "CAISO OASIS",
+        "HIFLD"
+      ],
+      "cadence": "5-min/hourly/static",
+      "spatial": "Node / Line / Substation",
+      "priority": "A+"
+    },
+    {
+      "id": "queue",
+      "name": "并网队列与网改成本",
+      "zh": "落地成本门槛",
+      "riskSignal": "排队MW、撤回率、System Impact Study、Network Upgrade Cost",
+      "sources": [
+        "LBNL Queued Up",
+        "ISO/RTO queues"
+      ],
+      "cadence": "dynamic/annual",
+      "spatial": "Project / Queue Zone / Substation",
+      "priority": "A+"
+    },
+    {
+      "id": "scenario",
+      "name": "长期情景与价格曲线",
+      "zh": "PPA/碳排长期假设",
+      "riskSignal": "未来小时价格、边际碳排、装机演变",
+      "sources": [
+        "NREL Cambium",
+        "NREL ATB",
+        "EIA AEO"
+      ],
+      "cadence": "scenario",
+      "spatial": "Zone / State",
+      "priority": "B"
+    }
+  ],
+  "regions": [
+    {
+      "name": "北弗吉尼亚 / Data Center Alley",
+      "risk": "high",
+      "score": 88,
+      "rto": "PJM",
+      "why": "超大规模数据中心密集，Orennia图中高规划容量+高输电风险；PJM节点拥堵与并网成本需重点核验。",
+      "next": "锁定PJM Dominion区域LMP节点 + queue upgrade cost",
+      "sources": [
+        "Orennia article",
+        "PJM Data Miner",
+        "EIA-930"
+      ]
+    },
+    {
+      "name": "德克萨斯 / Dallas-Austin-San Antonio",
+      "risk": "high",
+      "score": 78,
+      "rto": "ERCOT",
+      "why": "负荷增长和AI数据中心公告密集；ERCOT公开实时数据丰富，但局部输电和天然气/储能配套决定可落地性。",
+      "next": "拉ERCOT hub/node价格、planned outages、interconnection queue",
+      "sources": [
+        "ERCOT MIS",
+        "EIA-930",
+        "EIA-860"
+      ]
+    },
+    {
+      "name": "菲尼克斯 / Arizona",
+      "risk": "high",
+      "score": 74,
+      "rto": "WECC utility territories",
+      "why": "水/土地/太阳能资源与数据中心需求叠加，但电网升级周期和夏季峰值风险较高。",
+      "next": "映射APS/SRP服务区、夏季峰荷、HIFLD输电线",
+      "sources": [
+        "EIA-861",
+        "HIFLD",
+        "FERC-714"
+      ]
+    },
+    {
+      "name": "Hillsboro / Oregon",
+      "risk": "medium",
+      "score": 46,
+      "rto": "BPA / WECC",
+      "why": "光纤和数据中心基础较强，Orennia图中仍有部分绿色空间，但需核验BPA输电容量。",
+      "next": "BPA/WECC节点、EIA-930 BA load、可再生PPA资源",
+      "sources": [
+        "EIA-930",
+        "HIFLD",
+        "NREL Cambium"
+      ]
+    },
+    {
+      "name": "Storey County / Nevada",
+      "risk": "medium",
+      "score": 42,
+      "rto": "NV Energy / WECC",
+      "why": "图中显示仍有低风险空间；适合做绿海样板，但需关注长距离输电和本地变电站容量。",
+      "next": "叠加HIFLD线路、EIA-860周边机组、utility rate",
+      "sources": [
+        "HIFLD",
+        "EIA-860",
+        "EIA-861"
+      ]
+    },
+    {
+      "name": "中西部 / Midwest",
+      "risk": "low",
+      "score": 31,
+      "rto": "MISO/SPP/PJM fringe",
+      "why": "Orennia图中绿色点较多，单体项目小但数量增长；可能存在未被充分定价的电力先行机会。",
+      "next": "建立county-level电源+队列+工业电价筛选器",
+      "sources": [
+        "MISO/SPP queues",
+        "EIA-861",
+        "LBNL Queued Up"
+      ]
+    },
+    {
+      "name": "东南部 / Southeast",
+      "risk": "low",
+      "score": 36,
+      "rto": "Utility territories",
+      "why": "图中低风险点较多，但非RTO区域数据透明度低，需要FERC/EIA+utility IRP补全。",
+      "next": "utility IRP + FERC 714 + HIFLD +公告抓取",
+      "sources": [
+        "FERC-714",
+        "EIA-861",
+        "Utility IRP"
+      ]
+    }
+  ],
+  "dataSources": [
+    {
+      "name": "EIA-860 / 860M",
+      "owner": "EIA",
+      "url": "https://www.eia.gov/electricity/data/eia860/",
+      "category": "generator",
+      "fields": "generator_id, plant_id, lat/lon, capacity_mw, fuel, status, planned_online/retirement",
+      "cadence": "annual/monthly",
+      "access": "public",
+      "use": "机组台账与周边供给底盘"
+    },
+    {
+      "name": "EIA-923",
+      "owner": "EIA",
+      "url": "https://www.eia.gov/electricity/data/eia923/",
+      "category": "generation",
+      "fields": "net_generation_mwh, fuel_consumption, stocks",
+      "cadence": "monthly/annual",
+      "access": "public",
+      "use": "真实发电量与利用小时"
+    },
+    {
+      "name": "EIA-930",
+      "owner": "EIA",
+      "url": "https://www.eia.gov/electricity/gridmonitor/about",
+      "category": "load",
+      "fields": "BA demand, forecast demand, interchange, generation by fuel",
+      "cadence": "hourly/near real-time",
+      "access": "public",
+      "use": "BA负荷压力与跨区依赖"
+    },
+    {
+      "name": "EIA-861",
+      "owner": "EIA",
+      "url": "https://www.eia.gov/electricity/data/eia861/",
+      "category": "retail",
+      "fields": "utility retail sales, revenue, industrial rate, demand response, AMI",
+      "cadence": "annual",
+      "access": "public",
+      "use": "Utility辖区工业电价与需求侧资源"
+    },
+    {
+      "name": "EPA eGRID",
+      "owner": "EPA",
+      "url": "https://www.epa.gov/egrid/download-data",
+      "category": "emissions",
+      "fields": "plant/subregion emissions rate, generation mix",
+      "cadence": "annual",
+      "access": "public",
+      "use": "绿电/零碳承诺与碳强度"
+    },
+    {
+      "name": "FERC Form 714",
+      "owner": "FERC",
+      "url": "https://www.ferc.gov/industries-data/electric/general-information/electric-industry-forms/form-no-714-annual-electric/data",
+      "category": "planning",
+      "fields": "BA/Planning Area peak load, demand forecast, tie-line",
+      "cadence": "annual",
+      "access": "public",
+      "use": "长期负荷与规划区映射"
+    },
+    {
+      "name": "HIFLD Transmission Lines",
+      "owner": "DHS/HIFLD",
+      "url": "https://hifld-geoplatform.opendata.arcgis.com/",
+      "category": "gis",
+      "fields": "line geometry, voltage_kv, owner, status",
+      "cadence": "static/periodic",
+      "access": "public",
+      "use": "输电线/变电站GIS叠加"
+    },
+    {
+      "name": "LBNL Queued Up",
+      "owner": "LBNL",
+      "url": "https://emp.lbl.gov/queues",
+      "category": "queue",
+      "fields": "queue project capacity, status, withdrawal/completion, technology, region",
+      "cadence": "annual",
+      "access": "public",
+      "use": "宏观并网拥堵与撤回率"
+    },
+    {
+      "name": "PJM Data Miner",
+      "owner": "PJM",
+      "url": "https://dataminer2.pjm.com/list",
+      "category": "lmp",
+      "fields": "node LMP, congestion, losses, load, constraints",
+      "cadence": "5-min/hourly",
+      "access": "public/API",
+      "use": "北弗吉尼亚/PJM拥堵哨兵"
+    },
+    {
+      "name": "ERCOT MIS / Public Data",
+      "owner": "ERCOT",
+      "url": "https://www.ercot.com/gridinfo",
+      "category": "lmp",
+      "fields": "settlement point prices, load, outages, interconnection",
+      "cadence": "real-time/daily",
+      "access": "public/partly gated",
+      "use": "德州数据中心节点风险"
+    },
+    {
+      "name": "CAISO OASIS",
+      "owner": "CAISO",
+      "url": "http://oasis.caiso.com/mrioasis/logon.do",
+      "category": "lmp",
+      "fields": "LMP, congestion, load, outages",
+      "cadence": "5-min/hourly",
+      "access": "public",
+      "use": "加州/西部价格与拥堵参考"
+    },
+    {
+      "name": "NREL Cambium",
+      "owner": "NREL",
+      "url": "https://www.nrel.gov/analysis/cambium.html",
+      "category": "scenario",
+      "fields": "future hourly prices, marginal emissions, capacity mix",
+      "cadence": "scenario releases",
+      "access": "public",
+      "use": "长期PPA/碳排情景"
+    }
+  ],
+  "triggers": [
+    {
+      "metric": "LMP congestion component",
+      "threshold": "持续> $10/MWh 或峰时暴涨",
+      "meaning": "节点输电拥堵转红",
+      "owner": "价格哨兵"
+    },
+    {
+      "metric": "Queue MW / local load",
+      "threshold": ">2x 且撤回率上行",
+      "meaning": "并网排队挤兑",
+      "owner": "队列解析器"
+    },
+    {
+      "metric": "Network upgrade cost",
+      "threshold": ">$100/kW 或突然跳升",
+      "meaning": "落地成本可能吞噬项目经济性",
+      "owner": "SIS/NLP解析"
+    },
+    {
+      "metric": "Peak load growth",
+      "threshold": "YoY >5–8%",
+      "meaning": "Utility规划落后风险",
+      "owner": "EIA-930/FERC-714"
+    },
+    {
+      "metric": "Distance to 230/345/500kV lines",
+      "threshold": ">10–20 miles",
+      "meaning": "接入改造/线路权属复杂",
+      "owner": "GIS叠加"
+    }
+  ],
+  "evidence": [
+    {
+      "title": "微信公众号归档：美国在建/规划中数据中心的输电风险分析",
+      "type": "article-archive",
+      "asOf": "2026-07-06",
+      "sourceLabel": "LMVK/raw/articles/wechat_mp/us_power_mapping_1NBCm8sOmsoirCTiFJGixA_article.md"
+    },
+    {
+      "title": "Orennia Data Center Capabilities",
+      "type": "vendor-methodology",
+      "asOf": "2026-07-06",
+      "sourceLabel": "LMVK/raw/articles/us_power_mapping/orennia/data-center-capabilities.md"
+    },
+    {
+      "title": "Orennia Transmission Analysis and Insights",
+      "type": "vendor-methodology",
+      "asOf": "2026-07-06",
+      "sourceLabel": "LMVK/raw/articles/us_power_mapping/orennia/transmission-analysis-and-insights.md"
+    },
+    {
+      "title": "LMVK概念文档：美国电力与电网数据 Mapping",
+      "type": "internal-synthesis",
+      "asOf": "2026-07-06",
+      "sourceLabel": "LMVK/concepts/us-power-grid-data-mapping.md"
+    }
+  ]
+}

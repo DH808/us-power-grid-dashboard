@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>美国电力与数据中心电网风险 Dashboard</title>
+  <link rel="stylesheet" href="/style.css?v=20260706" />
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Power-first Site Selection · ResearchOS MVP</p>
+      <h1>美国电力与数据中心电网风险 Dashboard</h1>
+      <p class="subtitle">把 Orennia 的“输电风险”图拆解为可复刻的数据工程：负荷、机组、节点LMP、并网队列、GIS输电网。</p>
+    </div>
+    <div class="hero-actions">
+      <a href="/api/export/markdown" target="_blank">导出 Markdown</a>
+      <span id="asOf">loading…</span>
+    </div>
+  </header>
+  <main>
+    <section class="kpis" id="kpis"></section>
+    <section class="grid two">
+      <article class="card large"><div class="section-title"><span>区域风险雷达</span><small>score 越高越红</small></div><div id="regionList" class="region-list"></div></article>
+      <article class="card"><div class="section-title"><span>数据产品漏斗</span><small>从公开源 → 风险信号</small></div><div class="funnel" id="funnel"></div></article>
+    </section>
+    <section class="card"><div class="section-title"><span>数据层级 Mapping</span><small>工程师/数据科学家入口</small></div><div id="layers" class="layers"></div></section>
+    <section class="grid two"><article class="card"><div class="section-title"><span>触发器 / Sentinel Rules</span><small>可自动化监控</small></div><div id="triggers" class="triggers"></div></article><article class="card"><div class="section-title"><span>Investment Implication</span><small>买方视角</small></div><div class="memo"><h3>核心判断</h3><p>数据中心供给不是看公告 MW，而是看其是否能穿过并网队列、拥堵价格、网改成本三道门。</p><h3>最先自动化的三张表</h3><ol><li>PJM / ERCOT 节点 LMP 拥堵分量 watchlist</li><li>ISO/RTO Interconnection Queue + upgrade cost parser</li><li>EIA-860/930 + HIFLD 的 county/substation GIS叠加表</li></ol></div></article></section>
+    <section class="card"><div class="section-title"><span>权威数据库目录</span><small>字段 · 粒度 · 用途 · 获取方式</small></div><div class="controls"><button data-cat="all" class="active">全部</button><button data-cat="lmp">LMP/拥堵</button><button data-cat="queue">队列</button><button data-cat="generator">机组</button><button data-cat="load">负荷</button><button data-cat="gis">GIS</button></div><div class="table-wrap"><table><thead><tr><th>数据库</th><th>机构</th><th>分类</th><th>字段</th><th>频次</th><th>用途</th></tr></thead><tbody id="sourceRows"></tbody></table></div></section>
+    <section class="card evidence"><div class="section-title"><span>Evidence Ledger</span><small>公开展示脱敏来源标签；内部原始文件不暴露</small></div><div id="evidence"></div></section>
+  </main>
+  <script src="/app.js?v=20260706"></script>
+</body>
+</html>
