@@ -3,6 +3,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { summarize } = require('./src/insights');
+const { getLiveSources } = require('./src/live_sources');
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = Number(process.env.PORT || 8837);
 const ROOT = __dirname;
@@ -31,6 +32,8 @@ function toMarkdown(state){
   for (const r of state.regions.slice().sort((a,b)=>b.score-a.score)) lines.push(`- **${r.name}** (${r.risk}, ${r.score}/100): ${r.why} 下一步：${r.next}`);
   lines.push('', '## 数据源目录');
   for (const s of state.dataSources) lines.push(`- **${s.name}** / ${s.owner} / ${s.category}: ${s.fields}. 用途：${s.use}. URL: ${s.url}`);
+  lines.push('', '## 自动化模块');
+  for (const m of (state.automationPlan || [])) lines.push(`- **${m.module}** (${m.status}): ${m.endpoint} → ${m.output}`);
   return lines.join('\n');
 }
 const server = http.createServer((req,res)=>{
@@ -38,6 +41,7 @@ const server = http.createServer((req,res)=>{
     const url = new URL(req.url, `http://${req.headers.host}`);
     if (url.pathname === '/api/health') return send(res,200,JSON.stringify({ok:true, service:'us-power-grid-dashboard', time:new Date().toISOString(), port:PORT}));
     if (url.pathname === '/api/state') return send(res,200,JSON.stringify(readState()));
+    if (url.pathname === '/api/live') return getLiveSources().then(live => send(res,200,JSON.stringify(live))).catch(e => send(res,500,JSON.stringify({ok:false,error:e.message})));
     if (url.pathname === '/api/export/markdown') return send(res,200,toMarkdown(readState()),'text/markdown; charset=utf-8');
     const file = safeJoin(PUBLIC, url.pathname);
     if (!file || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return send(res,404,'not found','text/plain; charset=utf-8');

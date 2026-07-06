@@ -1,12 +1,12 @@
 {
   "name": "us-power-grid-dashboard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "US power grid and data-center transmission risk dashboard",
   "scripts": {
     "start": "node server.js",
-    "test": "node test/insights.test.js",
-    "check": "node --check server.js && node --check src/insights.js && node --check public/app.js"
+    "test": "node test/insights.test.js && node test/live_sources.test.js",
+    "check": "node --check server.js && node --check src/insights.js && node --check src/live_sources.js && node --check public/app.js"
   },
   "engines": {
     "node": ">=18"

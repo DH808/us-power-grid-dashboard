@@ -2,7 +2,7 @@
   "meta": {
     "title": "美国电力与数据中心电网风险 Dashboard",
     "asOf": "2026-07-06",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "source": "Derived from Hermes LMVK research + Orennia article archive"
   },
   "thesis": "数据中心选址正在从‘光纤/客户优先’转向‘电力先行’。可交易的核心不是规划MW本身，而是负荷能否穿过并网队列、输电拥堵和网改成本三道门。",
@@ -348,6 +348,32 @@
       "type": "internal-synthesis",
       "asOf": "2026-07-06",
       "sourceLabel": "LMVK/concepts/us-power-grid-data-mapping.md"
+    }
+  ],
+  "automationPlan": [
+    {
+      "module": "EIA Load Watcher",
+      "endpoint": "EIA-930 / electricity/rto/region-data",
+      "status": "wired-mvp",
+      "output": "BA hourly demand and demand forecast for PJM/ERCOT/CAISO"
+    },
+    {
+      "module": "ISO Congestion Watcher",
+      "endpoint": "PJM/ERCOT/CAISO LMP feeds",
+      "status": "registry-ready",
+      "output": "node congestion component heatmap"
+    },
+    {
+      "module": "Queue Parser",
+      "endpoint": "LBNL + ISO queues",
+      "status": "registry-ready",
+      "output": "queue MW, withdrawal rate, upgrade-cost signals"
+    },
+    {
+      "module": "GIS Overlay",
+      "endpoint": "HIFLD transmission lines + EIA plant locations",
+      "status": "next",
+      "output": "site-to-line/substation distance and voltage screening"
     }
   ]
 }
