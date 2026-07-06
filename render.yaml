@@ -9,3 +9,5 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: SOURCE_TIMEOUT_MS
+        value: "3500"

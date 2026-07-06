@@ -1,5 +1,5 @@
 
-const SOURCE_TIMEOUT_MS = Number(process.env.SOURCE_TIMEOUT_MS || 9000);
+const SOURCE_TIMEOUT_MS = Number(process.env.SOURCE_TIMEOUT_MS || 3500);
 function withTimeout(ms){
   const controller = new AbortController();
   const timer = setTimeout(()=>controller.abort(), ms);
